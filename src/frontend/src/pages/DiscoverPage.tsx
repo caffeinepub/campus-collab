@@ -18,7 +18,11 @@ interface ProfileWithPrincipal {
   principal?: Principal;
 }
 
-export default function DiscoverPage() {
+export default function DiscoverPage({
+  onNavigateToMessages,
+}: {
+  onNavigateToMessages?: () => void;
+}) {
   const [skillFilter, setSkillFilter] = useState("");
   const [majorFilter, setMajorFilter] = useState("");
   const [messageTarget, setMessageTarget] =
@@ -114,18 +118,28 @@ export default function DiscoverPage() {
                 className="neo-card p-4 flex flex-col gap-3"
                 data-ocid={`discover.user.item.${i + 1}`}
               >
-                <AvatarCircle name={profile.name} size={48} />
-                <div>
-                  <p className="font-bold text-sm leading-tight">
-                    {profile.name}
-                  </p>
-                  <p
-                    className="text-xs mt-0.5"
-                    style={{ color: "oklch(0.5 0 0)" }}
-                  >
-                    {profile.major}
-                  </p>
-                </div>
+                {/* Clickable avatar + name/major */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMessageTarget(profile as ProfileWithPrincipal)
+                  }
+                  className="flex flex-col gap-2 cursor-pointer group/avatar text-left w-full"
+                  data-ocid={`discover.user.profile.button.${i + 1}`}
+                >
+                  <AvatarCircle name={profile.name} size={48} />
+                  <div>
+                    <p className="font-bold text-sm leading-tight group-hover/avatar:text-primary transition-colors group-hover/avatar:underline">
+                      {profile.name}
+                    </p>
+                    <p
+                      className="text-xs mt-0.5"
+                      style={{ color: "oklch(0.5 0 0)" }}
+                    >
+                      {profile.major}
+                    </p>
+                  </div>
+                </button>
 
                 <div
                   className={`text-xs font-black px-2 py-0.5 self-start border-2 tracking-wide ${
@@ -189,6 +203,7 @@ export default function DiscoverPage() {
         onClose={() => setMessageTarget(null)}
         recipientPrincipal={messageTarget?.principal ?? null}
         recipientName={messageTarget?.name ?? "Student"}
+        onAfterSend={onNavigateToMessages}
       />
     </div>
   );

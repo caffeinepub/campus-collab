@@ -89,7 +89,7 @@ function ProjectCard({
         {project.description}
       </p>
 
-      {/* Tags — cyan = needed, gray = offered. No redundant labels. */}
+      {/* Tags */}
       {(project.skillsNeeded.length > 0 ||
         project.skillsOffered.length > 0) && (
         <div className="flex flex-wrap gap-1.5">
@@ -108,15 +108,20 @@ function ProjectCard({
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-3 mt-auto border-t-2 border-border">
-        <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onJoinTeam(project)}
+          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity group/owner"
+          data-ocid={`feed.project.owner.button.${index + 1}`}
+        >
           <AvatarCircle name={ownerProfile?.name || "?"} size={28} />
           <span
-            className="text-xs font-semibold"
+            className="text-xs font-semibold group-hover/owner:text-primary transition-colors"
             style={{ color: "oklch(0.72 0 0)" }}
           >
             {ownerProfile?.name || "Student"}
           </span>
-        </div>
+        </button>
         <Button
           onClick={() => onJoinTeam(project)}
           className="btn-primary text-xs font-black px-4 py-1.5 h-auto tracking-wide"
@@ -129,7 +134,11 @@ function ProjectCard({
   );
 }
 
-export default function FeedPage() {
+export default function FeedPage({
+  onNavigateToMessages,
+}: {
+  onNavigateToMessages?: () => void;
+}) {
   const [activeSkill, setActiveSkill] = useState("All");
   const [messageTarget, setMessageTarget] = useState<Project | null>(null);
 
@@ -220,7 +229,7 @@ export default function FeedPage() {
               className="text-sm font-medium"
               style={{ color: "oklch(0.55 0 0)" }}
             >
-              Be the first to post! Hit &quot;The Ask&quot; to pitch your idea.
+              Be the first to post! Hit &quot;Post&quot; to pitch your idea.
             </p>
           </div>
         ) : (
@@ -246,6 +255,7 @@ export default function FeedPage() {
         recipientName={ownerProfile?.name || "Student"}
         projectId={messageTarget?.id}
         projectTitle={messageTarget?.title}
+        onAfterSend={onNavigateToMessages}
       />
     </div>
   );

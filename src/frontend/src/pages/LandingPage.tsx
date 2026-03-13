@@ -126,12 +126,19 @@ export default function LandingPage() {
             Find the people your idea needs.
           </p>
 
-          <button
+          <motion.button
             type="button"
             onClick={login}
             disabled={isLoading}
             className="btn-primary flex-shrink-0 px-8 py-4 text-base font-black tracking-wide flex items-center gap-2"
             data-ocid="landing.primary_button"
+            whileHover={{
+              scale: 1.06,
+              boxShadow:
+                "0 0 24px oklch(0.92 0.26 129 / 0.7), 4px 4px 0px oklch(0.92 0.26 129)",
+            }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 420, damping: 18 }}
           >
             {isLoading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -139,7 +146,7 @@ export default function LandingPage() {
               <Zap className="w-5 h-5" />
             )}
             {isLoading ? "Connecting..." : "Get Started"}
-          </button>
+          </motion.button>
         </motion.div>
 
         <motion.p

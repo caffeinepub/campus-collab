@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Principal } from "@icp-sdk/core/principal";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Pencil, Send } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { ConversationPreview } from "../backend.d";
@@ -234,7 +234,11 @@ function ThreadView({
   );
 }
 
-export default function MessagesPage() {
+export default function MessagesPage({
+  onNavigateToDiscover,
+}: {
+  onNavigateToDiscover: () => void;
+}) {
   const { data: previews = [], isLoading } = useGetConversationPreviews();
   const [activeParty, setActiveParty] = useState<Principal | null>(null);
 
@@ -248,9 +252,20 @@ export default function MessagesPage() {
         }`}
       >
         <div className="px-4 pt-5 pb-3 border-b-2 border-border">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-4xl font-black tracking-tight">Messages</h1>
-            <span className="text-3xl">💬</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline gap-3">
+              <h1 className="text-4xl font-black tracking-tight">Messages</h1>
+              <span className="text-3xl">💬</span>
+            </div>
+            <button
+              type="button"
+              onClick={onNavigateToDiscover}
+              className="btn-primary flex items-center gap-1.5 px-3 py-1.5 text-xs font-black uppercase tracking-wider"
+              data-ocid="messages.new_message_button"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+              New
+            </button>
           </div>
           <p
             className="text-sm font-medium mt-0.5"
@@ -283,8 +298,16 @@ export default function MessagesPage() {
               <div className="text-4xl mb-3">📭</div>
               <p className="font-black">No messages yet</p>
               <p className="text-sm mt-1" style={{ color: "oklch(0.5 0 0)" }}>
-                Go find a project and say hi!
+                Find someone to collab with!
               </p>
+              <button
+                type="button"
+                onClick={onNavigateToDiscover}
+                className="btn-primary mt-4 px-4 py-2 text-sm font-black uppercase tracking-wider"
+                data-ocid="messages.find_people_button"
+              >
+                Browse Discover 🎯
+              </button>
             </div>
           ) : (
             previews.map((preview, i) => (
@@ -311,12 +334,23 @@ export default function MessagesPage() {
             onBack={() => setActiveParty(null)}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center flex-1 text-center">
-            <div className="text-5xl mb-4">👈</div>
-            <p className="font-black text-lg">Pick a conversation</p>
-            <p className="text-sm mt-1" style={{ color: "oklch(0.5 0 0)" }}>
-              Select someone from the list to start chatting
+          <div className="flex flex-col items-center justify-center flex-1 text-center px-6">
+            <div className="text-5xl mb-4">✉️</div>
+            <p className="font-black text-lg">Start a conversation</p>
+            <p
+              className="text-sm mt-1 mb-5"
+              style={{ color: "oklch(0.5 0 0)" }}
+            >
+              Pick someone from the list, or find new people to message.
             </p>
+            <button
+              type="button"
+              onClick={onNavigateToDiscover}
+              className="btn-primary px-5 py-2 text-sm font-black uppercase tracking-wider"
+              data-ocid="messages.discover_link_button"
+            >
+              Find People 🎯
+            </button>
           </div>
         )}
       </div>

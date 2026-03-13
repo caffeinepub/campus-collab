@@ -20,6 +20,7 @@ interface SendMessageDialogProps {
   recipientName: string;
   projectId?: bigint;
   projectTitle?: string;
+  onAfterSend?: () => void;
 }
 
 export default function SendMessageDialog({
@@ -29,6 +30,7 @@ export default function SendMessageDialog({
   recipientName,
   projectId,
   projectTitle,
+  onAfterSend,
 }: SendMessageDialogProps) {
   const [body, setBody] = useState("");
   const { mutateAsync, isPending } = useSendMessage();
@@ -41,7 +43,22 @@ export default function SendMessageDialog({
         body: body.trim(),
         projectId: projectId ?? null,
       });
-      toast.success("Message sent! 🚀");
+      toast.success(
+        <span>
+          Message sent! Check{" "}
+          <button
+            type="button"
+            className="underline font-bold"
+            onClick={() => {
+              toast.dismiss();
+              onAfterSend?.();
+            }}
+          >
+            Messages
+          </button>{" "}
+          to see your inbox.
+        </span>,
+      );
       setBody("");
       onClose();
     } catch {

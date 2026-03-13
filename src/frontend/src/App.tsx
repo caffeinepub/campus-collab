@@ -64,12 +64,22 @@ export default function App() {
   return (
     <>
       <AppShell activePage={activePage} onNavigate={setActivePage}>
-        {activePage === "feed" && <FeedPage />}
-        {activePage === "discover" && <DiscoverPage />}
+        {activePage === "feed" && (
+          <FeedPage onNavigateToMessages={() => setActivePage("messages")} />
+        )}
+        {activePage === "discover" && (
+          <DiscoverPage
+            onNavigateToMessages={() => setActivePage("messages")}
+          />
+        )}
         {activePage === "post" && (
           <PostPage onSuccess={() => setActivePage("feed")} />
         )}
-        {activePage === "messages" && <MessagesPage />}
+        {activePage === "messages" && (
+          <MessagesPage
+            onNavigateToDiscover={() => setActivePage("discover")}
+          />
+        )}
         {activePage === "profile" && <ProfilePage />}
       </AppShell>
       <Toaster position="top-center" />

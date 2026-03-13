@@ -1,45 +1,27 @@
 # Campus Collab
 
 ## Current State
-New project. No existing code.
+Full-stack campus collaboration app with Feed, Discover, Post, Messages, and Profile pages. Neo-brutalist dark mode UI. AppShell has desktop sidebar + mobile bottom nav. Unread message count is polled and shown as a badge on the Messages nav item. LandingPage has a "Get Started" button. Discover cards have "Send Message" button per user.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Full authentication system (sign up, log in, log out) with user profiles
-- User profile: name, university major, skills offered, availability status (Looking / Busy), portfolio link
-- Project feed: all projects listed with skill-based filter chips
-- Project creation form: title, pitch description, skills offered, skills needed (multi-select), optional Figma URL, optional GitHub URL
-- Talent/People directory: browse all users, filter by skill and major
-- Async DM inbox: send and read messages between users (stored in backend, delivered on refresh)
-- Notifications badge for unread messages (Cyber Pink accent)
+- **Get Started button pop animation**: On hover, the button scales up with a bounce/glow effect (scale + neon lime glow pulse) to make it feel interactive and energetic.
+- **Notifications bell dropdown in AppShell**: A bell icon in the desktop sidebar header and mobile top bar. Clicking it opens a dropdown panel showing recent notifications. Notifications are derived from unread conversation previews ("X messaged you") and are displayed with sender name, message preview, and timestamp. Clicking a notification navigates to Messages.
+- **DM from anywhere via profile click**: In FeedPage, clicking a project owner's avatar/name opens a small profile popover or inline profile card showing their name, major, skills, and a "Send Message" button. In DiscoverPage, clicking the avatar/name (not just the button) opens the same flow.
 
 ### Modify
-N/A — new project.
+- AppShell: Add notification bell with unread badge to header area (desktop sidebar top, mobile top bar).
+- LandingPage: Add hover animation (scale + glow) to the "Get Started" button.
+- FeedPage: Make owner avatar/name clickable to open a mini profile card with Send Message.
+- DiscoverPage: Make avatar/name clickable (already has button, ensure the card header is also clickable).
 
 ### Remove
-N/A — new project.
+- Nothing removed.
 
 ## Implementation Plan
-
-### Backend (Motoko)
-- `UserProfile` record: principal, name, major, skillsOffered: [Text], availability: {#looking | #busy}, portfolioUrl: ?Text, avatarUrl: ?Text
-- `Project` record: id, ownerPrincipal, title, description, skillsOffered: [Text], skillsNeeded: [Text], figmaUrl: ?Text, githubUrl: ?Text, createdAt: Int
-- `Message` record: id, fromPrincipal, toPrincipal, body: Text, projectRef: ?Nat, sentAt: Int, read: Bool
-- CRUD APIs: createProfile, updateProfile, getMyProfile, getProfile(principal)
-- Project APIs: createProject, getProjects (all + optional skill filter), getProject(id), getMyProjects
-- People APIs: getUsers (all + optional skill/major filter)
-- Messaging APIs: sendMessage(to, body, ?projectRef), getConversations (list of unique threads), getThread(otherPrincipal), markRead
-- Unread count query: getUnreadCount
-
-### Frontend
-- App shell with bottom nav (mobile) and sidebar nav (desktop): Feed, Discover, Post, Messages, Profile
-- Auth screens: Sign Up and Log In (Internet Identity or simple username/password via authorization component)
-- Feed screen: project cards with avatar, title, skill tags, "Join the Team" CTA; skill filter chips at top
-- Post screen: multi-step form (Step 1: title + description, Step 2: skills offered + needed, Step 3: links)
-- Discover screen: user profile cards grid with skill/major filter
-- Messages screen: conversation list sidebar + thread view with message bubbles and shared links section
-- Profile screen: editable profile with skills, availability toggle, portfolio link
-- Neo-brutalist dark mode design: #121212 bg, #CCFF00 primary, #FF00BF notifications, #00FFFF secondary, 2px borders, hard shadows
-- Responsive: mobile-first with desktop layout adjustments
-- Space Grotesk or Syne font
+1. LandingPage.tsx: Add `whileHover` motion props to the "Get Started" button for scale + glow effect using framer-motion.
+2. AppShell.tsx: Add Bell icon with notification dropdown (using shadcn Popover or DropdownMenu). Fetch conversation previews to populate notification list. Show unread count badge on bell. Clicking a notification calls onNavigate("messages").
+3. FeedPage.tsx: Wrap owner avatar+name in a clickable element that opens a SendMessageDialog (or reuses existing one) pre-filled with the owner's principal.
+4. DiscoverPage.tsx: Wrap avatar+name in clickable trigger that also opens SendMessageDialog (complementary to existing button).
+5. AppShell needs `onNavigate` accessible in notification bell -- already passed as prop.
